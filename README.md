@@ -10,7 +10,7 @@ You can find out more about me at my [LinkedIn](https://www.linkedin.com/in/benj
 Last thing, big thank you to Stanford for making these lectures and course material publically available! They are immensely helpful and provide amazing opportunity to learn from many of the best minds in computer science (and other fields). They've been vital in my machine learning journey. 
 
 ## Assignments
-There are a total of 5 assignments of varying length. Assignment instructions are embedded in the provided notebook for each assignment. So, to be clear, assignment instructions and solutions are in the same notebook (in this repo). There are a total of 5 assignments, each of which are a directory (1st Assignment = "A1", 2nd = "A2", etc.) in [Assignments](). All coding assignments are programmed in Python using PyTorch and NumPy. 
+There are a total of 5 assignments of varying length. Assignment instructions are embedded in the provided notebook for each assignment. So, to be clear, assignment instructions and solutions are in the same notebook (in this repo). There are a total of 5 assignments, each of which are a directory (1st Assignment = "A1", 2nd = "A2", etc.). All coding assignments are programmed in Python using PyTorch and NumPy. 
 
 If you want to see the assignments without my code (eg. you want to do it yourself!), they can be found at the [course website](https://web.stanford.edu/class/cs224n/index.html#schedule)
 
