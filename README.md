@@ -14,10 +14,15 @@ There are a total of 5 assignments of varying length. Assignment instructions ar
 
 If you want to see the assignments without my code (eg. you want to do it yourself!), they can be found at the [course website](https://web.stanford.edu/class/cs224n/index.html#schedule)
 
-1. [Assignment 1](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/tree/main/PS1/a1)
-2. Assignment 2
-3. Assignment 3
-4. Assignment 4
-5. Assignment 5
-6. Assignment 6
+# Assignment 1
+- [Exploring Word Vectors](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/tree/main/PS1/a1)
 
+# Assignment 2
+
+# Assignment 3
+
+# Assignment 4
+
+# Assignment 5
+
+# Assignment 6
