@@ -1,7 +1,7 @@
 .DS_Store 
 .ipynb_checkpoints
 __pycache__
-.aux
-.log
-.out
-.synctex.gz
+*.aux
+*.log
+*.out
+*.synctex.gz
