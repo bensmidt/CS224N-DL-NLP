@@ -9,23 +9,61 @@
 \begin{document}
 \noindent Author: Benjamin Smidt
 
-\noindent Created: September 11, 2022
+\noindent Created: September 24, 2022
 
-\noindent Last Updated: September 11, 2022
+\noindent Last Updated: September 24, 2022
 \begin{center}
 \section*{Assignment 1: Exploring Word Vectors}
 \end{center}
 
 \paragraph{} Note to the reader. This is my work for assignment one of Stanford's course
-CS 224N: Natural Language Processing with Deep Learning. This document is thoroughly researched but
-may not be perfect. If there's a typo or a correction needs to be made, feel free to 
-email me at benjamin.smidt@utexas.edu so I can fix it. Thank you! I hope you find this 
-document helpful.
+\href{https://web.stanford.edu/class/cs224n/}{CS 224N: Natural Language Processing with Deep Learning}. 
+You can find the lecture Winter 2021 lectures series on YouTube \href{https://www.youtube.com/playlist?list=PLoROMvodv4rOSH4v6133s9LFPRHjEmbmJ}{here}.
+This document is meant to be used as a reference, explanation, and resource for the assignment, 
+not necessarily a comprehensive overview of Word Vectors. If there's a typo or a correction 
+needs to be made, feel free to email me at benjamin.smidt@utexas.edu so I can fix it. 
+Thank you! I hope you find this document helpful :). 
 
-\section{Mathematics}
+\tableofcontents
 
+\newpage
 
-\section{Programming}
+\section{Count-Based Word Vectors}
+
+\subsection{Distinct Words}
+Our first function is pretty simple. Our goal is to flatten the list of lists of words into one long list. 
+From there we remove all the duplicate words and return both the sorted list and its length. See the
+notebook for links on using list comprehension (to flatten the list of list of words). Python's \emph{set}
+data structure comes in very handy for removing duplicate words. Finally, we finish by having python 
+convert that set back to a list for us and using the \emph{sorted} function to sort that list. 
+
+\subsection{Compute Co-Occurence Matrix}
+This function is slightly more complicated but honestly if you've done some python programming it's fairly 
+trivial. We first grab our corpus as well as our \emph{words} word list and it's length (\emph{num-words}) 
+with the \emph{distinct-words()} function we just implemented. Next we create a dictionary mapping between 
+each word in \emph{words} with some number $i$ and store it in the dictionary \emph{word2ind}. The word's 
+number $i$ will serve as its index along both dimensions of our co-occurence matrix $M$. Then we 
+initialize our co-occurence matrix $M$, which has dimensions \emph{num-words} x \emph{num-words} with the 
+first dimension being the center word and the second being the context words (it doesn't really matter which
+one is which, that's just how I'm thinking about it).
+
+We fill our co-occurence matrix using a for-loop to iteratively compute the number of context words
+for a given center word. For each center word we move backward one word in the document and use our dictionary 
+\emph{word2ind} to find the proper row (center word) and column (context word) in $M$, and increment 
+$M$[\emph{center-word-index}, \emph{context-word-index}] by one. We do this until we've moved backward 
+by \emph{window-size} or until we hit \emph{START}. We repeat the same procedure moving forward
+except moving forward a word and stopping at \emph{END} or until we've reached a number of words equalling \emph{window-size}. 
+Finally, we return our co-occurence matrix $M$ and our dictionary mapping \emph{word2ind}. 
+
+\subsection{Reduce to K Dimensions}
+I'll quite honest here, I'm not very familiar with PCA or SVD. For this assignment it's not necessary 
+to know exactly how it works. The point is that we're extracting the most significant data from our 
+co-occurence matrix to reduce its dimensionality. Regarding code, just use the documentation from sklearn
+on how to call it and note the description in the notebook about SVD and Truncated SVD options in different libraries. 
+
+\subsection{}
+
+\section{Prediction-Based Word Vectors}
 
 \section{Resources}
 \begin{enumerate}
