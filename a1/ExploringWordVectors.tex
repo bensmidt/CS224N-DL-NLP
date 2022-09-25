@@ -6,6 +6,9 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{bbm}
+\usepackage[english]{babel}
+\usepackage[autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
 \begin{document}
 \noindent Author: Benjamin Smidt
 
@@ -61,19 +64,103 @@ to know exactly how it works. The point is that we're extracting the most signif
 co-occurence matrix to reduce its dimensionality. Regarding code, just use the documentation from sklearn
 on how to call it and note the description in the notebook about SVD and Truncated SVD options in different libraries. 
 
-\subsection{}
+\subsection{Plot Embeddings}
+This function is pretty simple. All we do is create a function that will things
+onto two dimensions. For our purposes, that will be plotting the two most significant
+dimensions of $U$ from out singular value decomposition. 
+
+\subsection{Co-Occurence Plot Analysis}
+We don't actually do anything but plot the output for this cell. The intereesting part though is 
+the similarity or dissimilarity of words. It makes sense that the countries are clustered close 
+together, that oil and energy synonymous, and (less so) that petroleum and industry are synonymous. 
+However, I'd expect "barrels" and "bpd" (barrels per day) to have a much closer meaning considering
+barrel is literally in the acronym of "bpd". Additionally, I feel like "bpd" should generally be 
+closer to the other oil related words since "bpd" is an exclusively oil/petroleum word used in the 
+energy industry. 
 
 \section{Prediction-Based Word Vectors}
 
+\subsection{GloVe Plot Analysis}
+We can see that the GloVe plot produced is somewhat different than that produced by our co-occurence
+matrix and SVD. The first thing I noticed was that although the coutnries are close to each other, 
+Kuwait is much farther from Ecuador and Iraq than in our co-occurence plot. Furthermore, petroleum, 
+Ecuador, and Iraq are \emph{very} close together. GloVe suggests that petroleum is more synonymous 
+with Iraq and Ecuador than our co-occurence matrix. 
+
+Another difference that stands out is how closely it place the words energy and industry. They appear 
+in the exact same place which wasn't the case at all in our co-occurence matrix. Finally, we see that 
+"bpd" and "barrels" have roughly the exact same distance between them as our co-occurence plot. This
+is quite interesting to me. I'm not totally sure what to think about that other than that the math 
+suggests that's how they should be related. 
+
+\subsection{Words with Multiple Meanings}
+I discovered distortion which has a variety of meanings. It includes: exaggeration, misrepresentation, 
+amplification, and vibration. Exaggeration and vibration are particularly different but you can see 
+that GloVe found some significantly different meanings in the way distortion is used. Many of the words
+I tried didn't work because GloVe only learns word meaning based on the dataset or documents used. 
+Thus, if a word is only ever used in a particular context for a given dataset, GloVe will only be 
+able to learn the word's meaning in that particular context.
+
+\subsection{Synonyms and Antonyms}
+Counterintuitively, you can see that \emph{timid} and \emph{shy} have a large cosine distance than 
+\emph{timid} and \emph{pushy}. By our framework, this would suggest that \emph{timid} is closer to 
+\emph{pushy} than \emph{shy} is. However, we know this not to be true since \emph{timid} and \emph{pushy}
+are antonyms and \emph{timid} and \emph{shy} are synonyms. 
+
+The reason this is a somewhat common occurence is because GloVe uses words that are close in distance 
+(within the document) to compute the similarity of meaning. It's the case that for some words, the antonym 
+often appear very close which has the interpretation of having a close meaning despite us knowing this isn't
+the case. Maybe a better interpretation would be that words that are closer together are highly correlated, 
+not necessarily similar in meaning. Although this generalization may be too broad to be useful and 
+sort of defeats the purpose of us creating word embeddings in the first place. 
+
+\subsection{Analogies with Word Vectors}
+Just to restate the variables, let $m$ be a vector representing the word \emph{man}, $k$ be for 
+\emph{king}, $w$ be for \emph{woman}, and $x$ be for the answer. All we're doing to find the answer
+is subtracting $m$ from $k$ (trying to take the "male" out of king) and adding $w$ (trying to add in 
+female). We then find the word with the greatest cosine similarity to this vector. 
+
+\subsection{Finding Analogies}
+This one is fun. I found that GloVe embeddings can recognize that \emph{Lebron} is to \emph{basketball}
+what \emph{Brady} (Tom Brady) is to \emph{football} which is a pretty accurate representation. They're 
+both star athletes in their respective sports and the fact we can identify what sport Tom Brady plays 
+by comparing him to the sport that Lebron plays is pretty impressive. 
+
+\subsection{Incorrect Analogy}
+The analogy I was looking for was: \emph{rock} is to \emph{hard} what \emph{bed} is to \emph{soft}. 
+However, the analogy I actually get is: \emph{rock} is to \emph{hard} what \emph{bed} is to \emph{get}.
+What does that mean? Shit who knows. 
+
+\subsection{Guided Analysis of Bias in Word Vectors}
+There's a pretty clear gender bias between man in woman, particularly in that women are associated
+with being a nurse, teacher, or "mother" as a profession. Men on the other hand are associated 
+with laborer (manual labor), mechanic, and factory. It's interesting to note that men are associated 
+with \emph{working}, \emph{job}, \emph{unemployed}, etc. while women are associated much more 
+with the home: \emph{homemaker}, \emph{child}, \emph{pregnant}, etc. 
+
+\subsection{Independent Analysis of Bias in Word Vectors}
+This one's pretty interesting I think. You can see the bias between men and women in mathematics 
+and sciences. When the analogy is of the form man:math :: woman:x, the answer is very much 
+teaching related: graders, literacy, teacher, curriculum, kindergarten, etc. When the analogy is 
+of the form woman:math :: man:x, the answer is quite different. We see words such as: whiz, genius, 
+physics, chemistry, skills, etc. So this shows some clear bias between men and women in STEM. 
+
+\subsection{Thinking About Bias}
+When we think about how these embeddings are developed, we're using the words often used with that
+word to indicate similarity. Thus, the embeddings reflect our own societal bias to talk about people
+a certain way. When we talk about men and mathematics we speak of geniuses, physics, and skill. When 
+we talk about women and mathematics we speak of women teaching, grading, etc.
+
+Obviously, the model itself isn't creating these biases. It's simply spitting back out the biases 
+that currently exist in the data that it was trained on. This actually makes it a very interesting 
+debugging tool for understanding the general trends and biases that exist within our language from 
+a more computational and evidence based perspective. We're using math here, so the bias is in the data, 
+more specifically our language and manner of speaking. This makes the biases we see in the model 
+compelling evidence for how people generally view different people. 
+
 \section{Resources}
 \begin{enumerate}
-    \item \href{https://web.stanford.edu/class/cs224n/index.html#schedule}{CS224N Home Page}
-    \item \href{https://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes01-wordvecs1.pdf}
-    {CS 224N Word Vectors: Introduction, SVD, and Word2Vec}
-    \item \href{https://www.youtube.com/watch?v=rmVRLeJRkl4}{CS 224N Lecture 1: Intro and Word Vectors}
-    \item \href{https://arxiv.org/pdf/1301.3781.pdf}
-    {Efficient Estimation of Word Representation in Vector Space (original word2vec paper)}
-    \item \href{https://proceedings.neurips.cc/paper/2013/file/9aa42b31882ec039965f3c4923ce901b-Paper.pdf}
-    {Distributed Representations of Words and Phrases and their Compositionality (negative sampling paper)}
+    \item \href{https://www.youtube.com/watch?v=P5mlg91as1c}{SVD Mining Massive Datasets Lecture 47- Stanford University (13 minutes)}
+    \item \href{https://web.stanford.edu/class/cs224n/}{CS 224N Lectures 1-2}
 \end{enumerate}
 \end{document}
