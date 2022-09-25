@@ -15,8 +15,9 @@ There are a total of 5 assignments of varying length. For the first assignment, 
 If you want to see the assignments without my code (eg. you want to do it yourself!), they can be found at the [course website](https://web.stanford.edu/class/cs224n/index.html#schedule)
 
 # Assignment 1
-- [Exploring Word Vectors Notebook](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A1/exploring_word_vectors.ipynb)
-- [Exploring Word Vectors PDF Work/Explanations](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A1/ExploringWordVectors.pdf)
+- Exploring Word Vectors
+  - [Notebook](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A1/exploring_word_vectors.ipynb)
+  - [PDF Work/Explanations](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A1/ExploringWordVectors.pdf)
 
 # Assignment 2
 
