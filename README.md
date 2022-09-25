@@ -9,22 +9,22 @@ You can find out more about me at my [LinkedIn](https://www.linkedin.com/in/benj
 
 Last thing, big thank you to Stanford for making these lectures and course material publically available! They are immensely helpful and provide amazing opportunity to learn from many of the best minds in computer science (and other fields). They've been vital in my machine learning journey. 
 
-## Assignments
+# Assignments
 There are a total of 5 assignments of varying length. For the first assignment, instructions are embedded in the provided notebook. However, for all other assignments (2-5) have an instruction pdf to go along with some provided boilerplate files and code. Additionally, each assignment also has a corresponding pdf (written by myself using LaTex) explaining my thought process, showing my work, and giving general tips. There are a total of 5 assignments, each of which are a directory (1st Assignment = "A1", 2nd = "A2", etc.). All coding assignments are programmed in Python using PyTorch and NumPy. 
 
 If you want to see the assignments without my code (eg. you want to do it yourself!), they can be found at the [course website](https://web.stanford.edu/class/cs224n/index.html#schedule)
 
-# Assignment 1
+## Assignment 1
 - Exploring Word Vectors
   - [Notebook](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A1/exploring_word_vectors.ipynb)
   - [PDF Work/Explanations](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A1/ExploringWordVectors.pdf)
 
-# Assignment 2
+## Assignment 2
 
-# Assignment 3
+## Assignment 3
 
-# Assignment 4
+## Assignment 4
 
-# Assignment 5
+## Assignment 5
 
-# Assignment 6
+## Assignment 6
