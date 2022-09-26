@@ -117,8 +117,10 @@ sort of defeats the purpose of us creating word embeddings in the first place.
 \subsection{Analogies with Word Vectors}
 Just to restate the variables, let $m$ be a vector representing the word \emph{man}, $k$ be for 
 \emph{king}, $w$ be for \emph{woman}, and $x$ be for the answer. All we're doing to find the answer
-is subtracting $m$ from $k$ (trying to take the "male" out of king) and adding $w$ (trying to add in 
-female). We then find the word with the greatest cosine similarity to this vector. 
+is finding the difference between $m$ and $k$ (trying to take the "male" out of king) and then adding
+that difference to $w$. We then find the word with the greatest
+cosine similarity to this vector (with the hope that the vector difference between man and king is the 
+same as the vector difference between woman and queen). 
 
 \subsection{Finding Analogies}
 This one is fun. I found that GloVe embeddings can recognize that \emph{Lebron} is to \emph{basketball}
