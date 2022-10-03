@@ -1,0 +1,145 @@
+\documentclass[12pt]{article}
+\usepackage{lingmacros}
+\usepackage{tree-dvips}
+% hyper links
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bbm}
+\usepackage{bm}
+% Formatting quotes properly
+\usepackage[english]{babel}
+\usepackage[autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+\usepackage{hyperref}
+
+
+
+% \newif\ifanswers
+% \answerstrue % comment out to hide answers
+
+% \usepackage[compact]{titlesec}
+% \usepackage{fancyhdr} % Required for custom headers
+% \usepackage{lastpage} % Required to determine the last page for the footer
+% \usepackage{extramarks} % Required for headers and footers
+% \usepackage[usenames,dvipsnames]{color} % Required for custom colors
+% \usepackage{graphicx} % Required to insert images
+% \usepackage{listings} % Required for insertion of code
+% \usepackage{courier} % Required for the courier font
+% \usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+% \usepackage{enumerate}
+% \usepackage{enumitem}
+% \usepackage{subfigure}
+% \usepackage{booktabs}
+% \usepackage{amsmath, amsthm, amssymb}
+% \usepackage{caption}
+% \usepackage{hyperref}
+% \captionsetup[table]{skip=4pt}
+% \usepackage{framed}
+% \usepackage{bm}
+% \usepackage{minted}
+% \usepackage{tikz}
+% \usetikzlibrary{positioning,patterns,fit}
+
+\begin{document}
+
+\noindent Author: Benjamin Smidt
+
+\noindent Created: October 3rd, 2022
+
+\noindent Last Updated: October 3rd, 2022
+\begin{center}
+\section*{CS 224N A2: Word Vectors}
+\end{center}
+
+\paragraph{} Note to the reader. This is my work for assignment one of Stanford's course
+\href{https://web.stanford.edu/class/cs224n/}{CS 224N: Natural Language Processing with Deep Learning}. 
+You can find the lecture Winter 2021 lectures series on YouTube \href{https://www.youtube.com/playlist?list=PLoROMvodv4rOSH4v6133s9LFPRHjEmbmJ}{here}.
+This document is meant to be used as a reference, explanation, and resource for the assignment, 
+not necessarily a comprehensive overview of Word Vectors. If there's a typo or a correction 
+needs to be made, feel free to email me at benjamin.smidt@utexas.edu so I can fix it. 
+Thank you! I hope you find this document helpful :). 
+
+\tableofcontents{}
+
+\section{Written Understanding}
+
+\subsection{Problem 1-A}
+\underline{Instructions}
+~\\
+Prove that the naive-softmax loss is the same as the cross-entropy 
+loss between $\bm y$ and $\hat{\bm y}$, i.e. (note that $\bm y, \hat{\bm y}$ 
+are vectors and $\hat{\bm y}_o$ is a scalar).
+~\\
+~\\
+\underline{Solution}
+~\\
+To start with, our naive-softmax loss is defined as
+\begin{equation*}
+    \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U) = -\log P(O=o| C=c)
+\end{equation*}
+where 
+\begin{equation*}
+P(O=o \mid C=c) = \frac{\exp(\bm u_{o}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+Let's define our variables. $ \hat{\bm y}$ is our score vector. Note that the 
+numerator is a vector of length $\bm V$ while the denominator is a scalar (this notation 
+is a bit abusive but I think it actually makes things clearer). Thus, each index 
+in the vector can be interpeted as the probability that the corresponding word (using the 
+the index and one hot vector) is the center word. 
+
+\begin{equation*}
+    \hat{\bm y} = 
+    \frac{\exp(\bm u^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+$\bm y$ is the one hot vector of the true center word. Then
+
+\begin{equation*} 
+    -\sum_{w \in \text{Vocab}} \bm y_w \log(\hat{\bm y}_w) = 
+    \bm -\bm y_1 \log(\hat{\bm y}_1) + ... + -\bm y_o \log(\hat{\bm y}_o) + ... + -\bm y_w \log(\hat{\bm y}_w)
+\end{equation*}    
+Where the index $\bm o$ indicates the index containing the only 1 within $\hat {\bm y}$ (since it is a one-hot vector). 
+\begin{equation*} 
+    -\sum_{w \in \text{Vocab}} \bm y_w \log(\hat{\bm y}_w) = 
+    \bm - (0)\log(\hat{\bm y}_1) + ... + -\bm (1) \log(\hat{\bm y}_o) + ... + - (0) \log(\hat{\bm y}_w)
+\end{equation*}    
+\begin{equation*} 
+    -\sum_{w \in \text{Vocab}} \bm y_w \log(\hat{\bm y}_w) = 
+    -\log(\hat{\bm y}_o)
+\end{equation*}    
+\begin{equation*} 
+    -\sum_{w \in \text{Vocab}} \bm y_w \log(\hat{\bm y}_w) = 
+    - \log(\frac{\exp(\bm u_o^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)})
+\end{equation*}    
+\begin{equation*} 
+    -\sum_{w \in \text{Vocab}} \bm y_w \log(\hat{\bm y}_w) = 
+    - \log P(O=o| C=c)
+\end{equation*}   
+\begin{equation*} 
+    -\sum_{w \in \text{Vocab}} \bm y_w \log(\hat{\bm y}_w) = 
+    \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)
+\end{equation*}     
+I know the instructions said one line but I was going for clarity here. Obviously, I could not define
+the variables (leave it to you to figure out what they mean) and just write some 
+one liner that connects the dots. However, I wanted to make this as clear to understand as possible. 
+Hopefully this leaves no room for ambiguity. 
+
+\subsection{Problem 1-B}
+\underline{Instructions}
+~\\
+Compute the partial derivative of $\bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)$ with respect to $\bm v_c$. 
+Please write your answer in terms of $\bm y$, $\hat{\bm y}$, and $\bm U$. Additionally, answer the following 
+two questions with one sentence each: (1) When is the gradient zero? (2) Why does subtracting this gradient, 
+in the general case when it is nonzero, make $\bm v_c$ a more desirable vector (namely, a vector closer to 
+outside word vectors in its window)?
+
+~\\
+~\\
+\underline{Solution}
+~\\
+
+
+
+
+
+\end{document}
