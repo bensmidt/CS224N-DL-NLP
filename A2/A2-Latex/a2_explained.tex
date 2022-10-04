@@ -64,6 +64,7 @@ Thank you! I hope you find this document helpful :).
 
 \section{Written Understanding}
 
+%% PROBLEM 1-A %%
 \subsection{Problem 1-A}
 \underline{Instructions}
 ~\\
@@ -124,6 +125,7 @@ the variables (leave it to you to figure out what they mean) and just write some
 one liner that connects the dots. However, I wanted to make this as clear to understand as possible. 
 Hopefully this leaves no room for ambiguity. 
 
+%% PROBLEM 1-B %%
 \subsection{Problem 1-B}
 \underline{Instructions}
 ~\\
@@ -132,11 +134,271 @@ Please write your answer in terms of $\bm y$, $\hat{\bm y}$, and $\bm U$. Additi
 two questions with one sentence each: (1) When is the gradient zero? (2) Why does subtracting this gradient, 
 in the general case when it is nonzero, make $\bm v_c$ a more desirable vector (namely, a vector closer to 
 outside word vectors in its window)?
-
 ~\\
 ~\\
 \underline{Solution}
 ~\\
+We start with our definition of $\bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)$.
+\begin{equation*}
+    \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U) = 
+    -log \frac{\exp(\bm u_{o}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm v_c} = 
+    \frac{\partial}{\partial \bm v_c} 
+    - log \frac{\exp(\bm u_{o}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm v_c} = 
+    \frac{\partial}{\partial \bm v_c} 
+    - \bm u_{o}^\top \bm v_c +
+    \frac{\partial}{\partial \bm v_c} 
+    \; log \sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)
+\end{equation*}
+Everything up to this point should be easy to follow if you remember calculus (although see the 
+first lecture where he goes through these exact steps in detail if you are confused). I then 
+do a quick change of variables to ensure I know what I'm taking my partial derivative with respect to.
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm v_c} = 
+    - \bm u_{o} +
+    \frac{1}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+    \frac{\partial}{\partial \bm v_c} 
+    {\sum_{j \in \text{Vocab}} \exp(\bm u_{j}^\top \bm v_c)}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm v_c} = 
+    - \bm u_{o} +
+    \frac{\sum_{j \in \text{Vocab}} \bm u_{j}^\top \exp(\bm u_{j}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+From here I hope you can see that if you remove the $\bm u_j^\top$ form the second sum term 
+you're left with $\bm {\hat y}$. Simplifying with this in mind we get the following.
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm v_c} = 
+    - \bm U^\top \bm y + \bm U^\top \bm {\hat y_w}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm v_c} = 
+    \bm U^\top (\bm {\hat y} - \bm y)
+\end{equation*}
+~\\
+1. The gradient is zero when $\bm {\hat y} = \bm y$. Obviously if our predicted and correct vectors 
+are equivalent then our accuracy is perfect and there's no update that could improve the loss.
+~\\
+2. Because we're doing gradient descent (as opposed to ascent), the update adds some portion ($\propto \alpha)$ of 
+$\bm U^\top \bm y$ and subtracts some portion of $\bm U^\top \bm {\hat y}$. This makes 
+intuitive sense because adding the correct vector $\bm u_o^\top$ makes it more like that vector (which is what we want) and 
+subtracting by $\bm U^\top \bm {\hat y}$, the weighted average of our incorrect vectors that are 
+producing the loss, makes it less like those vectors (again, what we want). 
+
+%% PROBLEM 1-C %%
+\subsection{Problem 1-C}
+\underline{Instructions}
+~\\
+Compute the partial derivatives of $\bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)$ with respect to 
+each of the `outside' word vectors, $\bm u_w$'s. There will be two cases: when $w=o$, the true 
+`outside' word vector, and $w \neq o$, for all other words. Please write your answer in terms of 
+$\bm y$, $\hat{\bm y}$, and $\bm v_c$. In this subpart, you may use specific elements within these 
+terms as well (such as $\bm y_1$, $\bm y_2$, $\dots$). Note that $\bm u_w$ is a vector while 
+$\bm y_1, \bm y_2, \dots$ are scalars.
+~\\
+~\\
+\underline{Solution}
+~\\
+\textbf{Case 1: $\bm u_w = u_o$}
+~\\
+We start with the case that $\bm u_w = u_o$. That is, the gradient with respect to the correct 
+embedding vector. 
+\begin{equation*}
+    \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U) = 
+    -log \frac{\exp(\bm u_{o}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_o} = 
+    \frac{\partial}{\partial \bm u_o} 
+    - log \frac{\exp(\bm u_{o}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_o} = 
+    \frac{\partial}{\partial \bm u_o} 
+    - log \frac{\exp(\bm u_{o}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_o} = 
+    \frac{\partial}{\partial \bm u_o} 
+    - \bm u_o^\top \bm v_c +
+    \frac{\partial}{\partial \bm u_o} 
+    \; log \sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_o} = 
+    - \bm v_c +
+    \frac{1}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+    \frac{\partial}{\partial \bm u_o} 
+    \sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_o} = 
+    - \bm v_c +
+    \frac{\bm v_c \exp(\bm u_o^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_o} = 
+    - \bm v_c + \bm v_c (\bm {\hat y} \cdot \bm y)
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_o} = 
+    \bm v_c ( \bm {\hat y_0} - 1 )
+\end{equation*}
+Note that $\bm {\hat y} \cdot \bm y$ is the dot product of the two vectors. 
+~\\
+~\\
+\textbf{Case 2: $\bm u_w = \bm u_o$}
+~\\
+Now we move onto the case that $\bm u_w \ne \bm u_o$. That is, the gradient with respect to 
+any vector $\bm u_w$ that isn't $\bm u_o$. I'll use the notation $\bm u_j$ to indicate a 
+specific $\bm u_w$ and (hopefully) prevent any confusion.
+\begin{equation*}
+    \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U) = 
+    -log \frac{\exp(\bm u_{o}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_j} = 
+    \frac{\partial}{\partial \bm u_j} 
+    - log \frac{\exp(\bm u_{o}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_j} = 
+    \frac{\partial}{\partial \bm u_j} 
+    - log \frac{\exp(\bm u_{o}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_j} = 
+    \frac{\partial}{\partial \bm u_j} 
+    - \bm u_o^\top \bm v_c +
+    \frac{\partial}{\partial \bm u_j} 
+    \; log \sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_j} = 
+    \frac{1}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+    \frac{\partial}{\partial \bm u_j} \sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_j} = 
+    \frac{\bm v_c \exp(\bm u_{j}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_j} = 
+    \bm v_c \; \bm {\hat y_j}
+\end{equation*}
+
+%% PROBLEM 1-D %%
+\subsection{Problem 1-D}
+\underline{Instructions}
+~\\
+Write down the partial derivative of $\bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)$ 
+with respect to $\bm U$. Please break down your answer in terms of 
+$\frac{\partial \bm J(\bm v_c, o, \bm U)}{\partial \bm u_1}$, 
+$\frac{\partial \bm J(\bm v_c, o, \bm U)}{\partial \bm u_2}$, 
+$\cdots$, $\frac{\partial \bm J(\bm v_c, o, \bm U)}{\partial \bm u_{|\text{Vocab}|}}$. 
+The solution should be one or two lines long.
+~\\
+~\\
+\underline{Solution}
+~\\
+We already know 
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_j} = 
+    \bm v_c \; \bm {\hat y_j} \; \; \text{and} \; \; 
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_0} = 
+    \bm v_c ( \bm {\hat y_0} - 1 )
+\end{equation*}
+Since $\bm y$ is a one hot vector, then
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_j} = 
+    \bm v_c ( \bm {\hat y} - \bm y )
+\end{equation*}
+With that we can write
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm U} = 
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_1}, ..., 
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm u_V}
+\end{equation*}
+where $V$ is the index of the last word vector in $\bm U$. It follows then that 
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm U} = 
+    \bm v_c \; \bm {\hat y_1}, 
+    \bm v_c \; \bm {\hat y_2}
+    , ..., 
+    \bm v_c \; \bm {\hat y_V}
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm U} = 
+    \bm v_c ( \bm {\hat y} - \bm y )^\top
+\end{equation*}
+where we use the outer product to get the proper shape for $\bm U$. 
+
+%% PROBLEM 1-E %%
+\subsection{Problem 1-E}
+\underline{Instructions}
+~\\
+The ReLU (Rectified Linear Unit) activation function is given by the Equation:
+\begin{equation}
+    \label{ReLU}
+    f(x) = \max(0, x)
+\end{equation}
+Please compute the derivative of $f(x)$ with respect to $x$, where $x$ is a scalar. 
+You may ignore the case that the derivative is not defined at 0.
+~\\
+~\\
+\underline{Solution}
+~\\
+We can break ReLU into two cases. 
+\begin{equation*}
+    f(x) = 
+    \begin{cases}
+        0 \; \; \text{if} \; \; x < 0 \\
+        x \; \; \text{if} \; \; x > 0
+    \end{cases}
+\end{equation*}
+Then the derivation becomes trivial.
+\begin{equation*}
+    f'(x) = 
+    \begin{cases}
+        0 \; \; \text{if} \; \; x < 0 \\
+        1 \; \; \text{if} \; \; x > 0
+    \end{cases}
+\end{equation*}
+
+%% PROBLEM 1-F %%
+\subsection{Problem 1-F}
+\underline{Instructions}
+~\\
+The sigmoid function is given by:
+\begin{equation*}
+    \label{Sigmoid Function}
+    \sigma (x) = \frac{1}{1 + e^{-x}} = \frac{e^{x}}{e^{x} + 1}
+\end{equation*}
+Please compute the derivative of $\sigma(x)$ with respect to $x$,
+where $x$ is a scalar. Hint: you may want to write your answer in terms of $\sigma(x)$.
+~\\
+~\\
+\underline{Solution}
+~\\
+\begin{equation*}
+    \sigma (x) = \frac{1}{1 + e^{-x}} = \frac{e^{x}}{e^{x} + 1}
+\end{equation*}
+\begin{equation*}
+    \sigma' (x) = \frac{(e^{x}+1) e^{x} - e^{x}e^{x}}{(e^{x} + 1)^2}
+\end{equation*}
+\begin{equation*}
+    \sigma' (x) = \frac{e^{2x} + e^{x} - e^{2x}}{(e^{2x} + 2e^{x} + 1)}
+\end{equation*}
+
+
+
+
+
 
 
 
