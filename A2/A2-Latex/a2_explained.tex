@@ -87,16 +87,16 @@ where
 P(O=o \mid C=c) = \frac{\exp(\bm u_{o}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
 \end{equation*}
 Let's define our variables. $ \hat{\bm y}$ is our score vector. Note that the 
-numerator is a vector of length $\bm V$ while the denominator is a scalar (this notation 
+numerator is a vector of length equal to the vocabulary size while the denominator is a scalar (this notation 
 is a bit abusive but I think it actually makes things clearer). Thus, each index 
 in the vector can be interpeted as the probability that the corresponding word (using the 
 the index and one hot vector) is the center word. 
 
 \begin{equation*}
     \hat{\bm y} = 
-    \frac{\exp(\bm u^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+    \frac{\exp(\bm U \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
 \end{equation*}
-$\bm y$ is the one hot vector of the true center word. Then
+$\bm y$ is the one hot vector of the true outside word. Then
 
 \begin{equation*} 
     -\sum_{w \in \text{Vocab}} \bm y_w \log(\hat{\bm y}_w) = 
@@ -532,7 +532,7 @@ outside word vectors in its window)?}
     \sum_{s=1}^K \sigma (\bm u_{w_s}^\top \bm v_c) \bm u_{w_s}
 \end{equation*}
 You can see that the gradient is zero when 
-$[1 - \sigma(\bm u_o^\top \bm v_c)] \bm u_o = \sum_{s=1}^K \sigma (\bm u_o^\top \bm v_c) \bm u_{w_s}$. 
+$-[\sigma(\bm u_o^\top \bm v_c) - 1] \bm u_o = \sum_{s=1}^K [1 - \sigma(-\bm u_{w_s}^\top \bm v_c)] \bm u_{w_s}$. 
 For our first term, if $\bm u_o^\top \bm v_c$ is small (dissimilar) then $\sigma (\bm u_o^\top \bm v_c)$ evaluates to a large number.
 Thus, in our gradient descent update, we'll be adding $\bm C \bm u_o$ ($\bm C$ = 1 - $\sigma (\bm u_o^\top \bm v_c)$) to 
 $\bm v_c$. Intuitively this makes sense because adding $\bm C \bm u_o$ to $\bm v_c$ will make $\bm v_c$ 
@@ -574,6 +574,10 @@ $\bm y_1, \bm y_2, \dots$ are scalars.}
 \end{equation*}
 \begin{equation*}
     \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_o} = 
+    - [1 - \sigma(\bm u_o^\top \bm v_c)] \bm v_c
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_o} = 
     [\sigma(\bm u_o^\top \bm v_c) - 1] \bm v_c
 \end{equation*}
 \textbf{Case 2: $\frac{\partial}{\partial \bm u_{w_s}}$}
@@ -588,16 +592,16 @@ $\bm y_1, \bm y_2, \dots$ are scalars.}
     \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_{w_s}} = 
     - \frac{\sigma(-\bm u_{w_s}^\top \bm v_c)}{\sigma(-\bm u_{w_s}^\top \bm v_c)}
     [1 - \sigma(-\bm u_{w_s}^\top \bm v_c)]
-    (- \bm u_{w_s})
+    (- \bm v_c)
 \end{equation*}
 \begin{equation*}
     \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_{w_s}} = 
     [1 - \sigma(-\bm u_{w_s}^\top \bm v_c)]
-    \bm u_{w_s}
+    \bm v_c
 \end{equation*}
 \begin{equation*}
     \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_{w_s}} = 
-    \sigma(\bm u_{w_s}^\top \bm v_c)    \bm u_{w_s}
+    \sigma(\bm u_{w_s}^\top \bm v_c) \bm v_c
 \end{equation*}
 See part (b) of this problem for that last jump, it's the exact same as before. 
 
@@ -616,7 +620,7 @@ a matrix with the outside vectors stacked as columns, and $\bm{1}$, a $(K + 1) \
 ~\\
 Since we compute the sigmoid function so much we could reuse the following: 
 \begin{equation*}
-    \sigma (\bm U_{o}^{\top} \bm v_c) - \bm 1
+    \sigma (\bm U_{o} \bm v_c)
 \end{equation*}
 \subsubsection{(iii)}
 \underline{Instructions}
@@ -656,12 +660,90 @@ Please write your answers in terms of the vectors $\bm v_c$ and $\bm u_{w_s}$, w
 Hint: break up the sum in the loss function into two sums: a sum over all sampled words equal to $w_s$ 
 and a sum over all sampled words not equal to $w_s$. Notation-wise, you may write `equal' and `not equal' 
 conditions below the summation symbols.    
-
 ~\\
 ~\\
 \underline{Solution}
 ~\\
+I'm going to use $j$ to iterate over the sum in this equation instead of $s$ to make the 
+notation more clear. 
+\begin{equation*}
+    \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_{w_s}} = 
+    \frac{\partial}{\partial \bm u_{w_s}}
+    -\log(\sigma(\bm u_o^\top \bm v_c)) - 
+    \frac{\partial}{\partial \bm u_{w_s}}
+    \sum_{j=1}^K \log(\sigma(-\bm u_{w_j}^\top \bm v_c))
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_{w_s}} = 
+    - \frac{\partial}{\partial \bm u_{w_s}}
+    \sum_{j=1, \; w_s \ne w_j}^K \log(\sigma(-\bm u_{w_j}^\top \bm v_c))
+    - \frac{\partial}{\partial \bm u_{w_s}}
+    \sum_{j=1, \; w_s = w_j}^K \log(\sigma(-\bm u_{w_j}^\top \bm v_c))
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_{w_s}} = 
+    - \frac{\partial}{\partial \bm u_{w_s}}
+    \sum_{j=1, \; w_s = w_j}^K \log(\sigma(-\bm u_{w_j}^\top \bm v_c))
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_{w_s}} = 
+    - \sum_{j=1, \; w_s = w_j}^K \frac{\sigma(-\bm u_{w_j}^\top \bm v_c)}{\sigma(-\bm u_{w_j}^\top \bm v_c)}
+    [1 - \sigma(-\bm u_{w_j}^\top \bm v_c)] \bm v_c
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_{w_s}} = 
+    \sum_{j=1, \; w_s = w_j}^K 
+     \sigma(\bm u_{w_j}^\top \bm v_c) \bm v_c
+\end{equation*}
 
+%% PROBLEM 1-I %%
+\subsection{Problem I}
+\underline{Instructions}
+~\\
+Suppose the center word is $c = w_t$ and the context window is 
+$[w_{t-m}$, $\ldots$, $w_{t-1}$, $w_{t}$, $w_{t+1}$, $\ldots$, $w_{t+m}]$, 
+where $m$ is the context window size. Recall that for the  skip-gram version of {\tt word2vec}, 
+the total loss for the context window is:
+\begin{equation}
+\bm J_{\textrm{skip-gram}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U) = \sum_{\substack{-m\le j \le m \\ j\ne 0}} \bm J(\bm v_c, w_{t+j}, \bm U)
+\end{equation}
+
+Here, $\bm J(\bm v_c, w_{t+j}, \bm U)$ represents an arbitrary loss term for the center
+word $c=w_t$ and outside word $w_{t+j}$. $\bm J(\bm v_c, w_{t+j}, \bm U)$ could be 
+$\bm J_{\text{naive-softmax}}(\bm v_c, w_{t+j}, \bm U)$ or $\bm J_{\text{neg-sample}}(\bm v_c, w_{t+j}, \bm U)$, 
+depending on your implementation.
+
+Write down three partial derivatives: 
+\begin{enumerate}[label=(\roman*)]
+    \item ${\frac{\partial \bm J_{\textrm{skip-gram}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)} {\partial \bm U}}$
+    \item ${\frac{\partial \bm J_{\textrm{skip-gram}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)} {\partial \bm v_c}}$
+    \item ${\frac{\partial \bm J_{\textrm{skip-gram}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)} {\partial \bm v_w}}$ 
+    when $w \ne c$
+\end{enumerate}
+Write your answers in terms of ${\frac{\partial \bm J(\bm v_c, w_{t+j}, \bm U)}{\partial \bm U}}$ 
+and ${\frac{\partial \bm J(\bm v_c, w_{t+j}, \bm U)}{\partial \bm v_c}}$. This is very simple -- 
+each solution should be one line.
+~\\
+~\\
+\underline{Solution}
+~\\
+At first I though these solutions were supposed to be substituted and simplified but I'm pretty sure this 
+is literally all the question is asking. 
+\begin{equation}
+    \frac{\partial \bm J_{\textrm{neg-sample}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)}{\partial \bm U} = 
+    \sum_{\substack{-m\le j \le m \\ j\ne 0}} 
+    \frac{\partial \bm J(\bm v_c, w_{t+j}, \bm U)}{\partial \bm U}
+\end{equation}
+\begin{equation}
+    \frac{\partial \bm J_{\textrm{neg-sample}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)}{\partial \bm v_c} = 
+    \sum_{\substack{-m\le j \le m \\ j\ne 0}} 
+    \frac{\partial \bm J(\bm v_c, w_{t+j}, \bm U)}{\partial \bm v_c}
+\end{equation}
+\begin{equation}
+    \frac{\partial \bm J_{\textrm{neg-sample}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)}{\partial \bm v_w} = 0
+\end{equation}
+
+This last one should make sense because $\bm v_w$ isn't part of the loss function at all. 
 
 
 
