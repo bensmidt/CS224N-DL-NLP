@@ -857,6 +857,14 @@ gradient matrix. I racked my brain for a long time to try and do this without us
 a for loop but I could not find one. Please let me know if you did, I would thoroughly 
 enjoy knowing. 
 
+\subsection{Skipgram}
+This function is pretty simple. All you need to do is iterate over all the words, add 
+all the losses, add all the gradients, and spit back the output. Nothing much going on 
+here to be honest. Although I will note that in the gradient checker, if you switch 
+the order in which you check the two different functions (negative sampling vs. softmax), 
+you actually get a different loss. I'm not totally sure what that's about but it was something 
+worth mentioning. 
+
 
 \section{References}
 \begin{enumerate}

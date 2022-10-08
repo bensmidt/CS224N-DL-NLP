@@ -196,10 +196,8 @@ def skipgram(currentCenterWord, windowSize, outsideWords, word2Ind,
 
     for i in range(len(outsideWords)): 
         o = word2Ind[outsideWords[i]]   # index
-        cur_loss, cur_gradCenterVecs, cur_gradOutsideVectors = word2vecLossAndGradient(v_c, 0, outsideVectors, dataset)
+        cur_loss, cur_gradCenterVecs, cur_gradOutsideVectors = word2vecLossAndGradient(v_c, o, outsideVectors, dataset)
         loss += cur_loss
-        print("iteration", i)
-        print(loss)
         gradCenterVecs[center_word_idx] += cur_gradCenterVecs
         gradOutsideVectors += cur_gradOutsideVectors
         
@@ -301,17 +299,18 @@ def test_skipgram():
     """ Test skip-gram with naiveSoftmaxLossAndGradient """
     dataset, dummy_vectors, dummy_tokens = getDummyObjects()
 
-    print("==== Gradient check for skip-gram with negSamplingLossAndGradient ====")
-    gradcheck_naive(lambda vec: word2vec_sgd_wrapper(
-        skipgram, dummy_tokens, vec, dataset, 5, negSamplingLossAndGradient),
-        dummy_vectors, "negSamplingLossAndGradient Gradient")
-    grad_tests_negsamp(skipgram, dummy_tokens, dummy_vectors, dataset, negSamplingLossAndGradient)
-
     print("==== Gradient check for skip-gram with naiveSoftmaxLossAndGradient ====")
     gradcheck_naive(lambda vec: word2vec_sgd_wrapper(
         skipgram, dummy_tokens, vec, dataset, 5, naiveSoftmaxLossAndGradient),
         dummy_vectors, "naiveSoftmaxLossAndGradient Gradient")
     grad_tests_softmax(skipgram, dummy_tokens, dummy_vectors, dataset)
+
+    # dataset, dummy_vectors, dummy_tokens = getDummyObjects()
+    print("==== Gradient check for skip-gram with negSamplingLossAndGradient ====")
+    gradcheck_naive(lambda vec: word2vec_sgd_wrapper(
+        skipgram, dummy_tokens, vec, dataset, 5, negSamplingLossAndGradient),
+        dummy_vectors, "negSamplingLossAndGradient Gradient")
+    grad_tests_negsamp(skipgram, dummy_tokens, dummy_vectors, dataset, negSamplingLossAndGradient)
 
     
 

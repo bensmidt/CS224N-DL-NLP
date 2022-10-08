@@ -65,6 +65,8 @@ def grad_tests_softmax(skipgram, dummy_tokens, dummy_vectors, dataset):
                 skipgram("c", 3, ["a", "b", "e", "d", "b", "c"],
                 dummy_tokens, dummy_vectors[:5,:], dummy_vectors[5:,:], dataset)
 
+    print("your loss:", output_loss)
+
     assert np.allclose(output_loss, 11.16610900153398), \
            "Your loss does not match expected loss."
     expected_gradCenterVecs = [[ 0.,          0.,          0.        ],
@@ -141,7 +143,8 @@ def grad_tests_negsamp(skipgram, dummy_tokens, dummy_vectors, dataset, negSampli
     output_loss, output_gradCenterVecs, output_gradOutsideVectors = \
                 skipgram("c", 1, ["a", "b"], dummy_tokens, dummy_vectors[:5,:],
                 dummy_vectors[5:,:], dataset, negSamplingLossAndGradient)
-
+    
+    print("your loss:", output_loss)
     assert np.allclose(output_loss, 16.15119285363322), \
            "Your loss does not match expected loss."
     expected_gradCenterVecs = [[ 0.,          0.,          0.        ],
