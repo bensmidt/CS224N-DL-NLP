@@ -16,10 +16,14 @@ If you want to see the assignments without my code (eg. you want to do it yourse
 
 ## Assignment 1
 - Exploring Word Vectors
-  - [Notebook](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A1/exploring_word_vectors.ipynb)
+  - [exploring_word_vectors.ipynb](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A1/exploring_word_vectors.ipynb)
   - [PDF Work/Explanations](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A1/ExploringWordVectors.pdf)
 
 ## Assignment 2
+- Word2Vec
+  - [Instructions](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/A2-Instructions.pdf)
+  - [word2vec.py](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/word2vec.py), [sgd.py](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/sgd.py)
+  - [PDF Work/Explanations](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/A2-Latex/a2_explained.pdf)
 
 ## Assignment 3
 
