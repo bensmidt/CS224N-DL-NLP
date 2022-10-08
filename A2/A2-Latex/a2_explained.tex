@@ -865,6 +865,15 @@ the order in which you check the two different functions (negative sampling vs. 
 you actually get a different loss. I'm not totally sure what that's about but it was something 
 worth mentioning. 
 
+\subsection{Stochastic Gradient Descent}
+The update rule is pretty simple here. We just use the following code 
+per usual
+\begin{verbatim}
+    loss, gradient = f(x)
+    x -= step * gradient
+\end{verbatim}
+Anyways, that's all for this assignment!
+
 
 \section{References}
 \begin{enumerate}
