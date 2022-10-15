@@ -1,4 +1,4 @@
-# CS224N
+# CS224N: Deep Learning with Natural Language Processing
 My solutions to Stanford's public course [CS224N: Natural Language Processing with Deep Learning](https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1214/index.html#schedule), taught by Christopher Manning (Winter 2021).
 Lectures are freely available on [YouTube](https://www.youtube.com/playlist?list=PLoROMvodv4rOSH4v6133s9LFPRHjEmbmJ). 
 
