@@ -48,7 +48,7 @@
 
 \noindent Created: October 3rd, 2022
 
-\noindent Last Updated: October 5th, 2022
+\noindent Last Updated: October 7th, 2022
 \begin{center}
 \section*{CS 224N A2: Word Vectors}
 \end{center}
@@ -473,7 +473,8 @@ outside word vectors in its window)?}
     \sum_{s=1}^K 
     \frac{\partial}{\partial \bm v_c}
     \log(\sigma(-\bm u_{w_s}^\top \bm v_c))
-\end{equation*}\begin{equation*}
+\end{equation*}
+\begin{equation*}
     \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm v_c} = 
     - \frac{1}{\sigma(\bm u_o^\top \bm v_c)} 
     \frac{\partial}{\partial \bm v_c}
@@ -745,10 +746,140 @@ is literally all the question is asking.
 
 This last one should make sense because $\bm v_w$ isn't part of the loss function at all. 
 
+\section{Programming}
+If you don't know how to use NumPy (or Python more generally) I'd suggest going through 
+\href{https://cs231n.github.io/python-numpy-tutorial/}{this tutorial} to learn the basics
+
+\subsection{Sigmoid}
+This one is a gimme if you know how to use NumPy at all. Literally just write down the sigmoid function 
+using $np.exp()$ and you're done. 
+
+\subsection{Naive Softmax Loss and Gradient}
+Here is where all the math we've done really comes in handy. Literally 90\% of this assignment is 
+understanding and deriving the equations while the other 10\% is just writing down our 
+mathematical results for the computer to calculate. It works out for me because I think math is dope 
+but might be a little annoying for people who like programming a lot more. This whole last paragraph 
+contributed nothing to this explanation but I really felt like writing it so ahaha. 
+
+Anyways, let's get programming. As we saw in Problem A, our loss function is
+\begin{equation*} 
+    \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U) = 
+    - \log(\frac{\exp(\bm u_o^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)})
+\end{equation*} 
+Let's rearrange this a bit and make it more numerically stable. These exponentials can easily blow up 
+to numbers much larger than we can store in a computer. We first add a constant $\bm C$ to both 
+the numerator and the denominator, which you can see doesn't affect the equation at all.
+\begin{equation*} 
+    \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U) = 
+    - \log(\frac{\bm C \exp(\bm u_o^\top \bm v_c)}{ \sum_{w \in \text{Vocab}} \bm C \exp(\bm u_{w}^\top \bm v_c)})
+\end{equation*} 
+Then we move the constant inside the exponential. 
+\begin{equation*} 
+    \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U) = 
+    - \log(\frac{\exp(\bm u_o^\top \bm v_c + log \bm C)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c + log \bm C)})
+\end{equation*} 
+We can then set $log \bm C = - max(\bm u_w^\top \bm v_c)$ so that the maximum value of our 
+exponential will be 1. This is prevents the exponential from blowing up the loss such that 
+it makes our code numerically unstable. For more info see 
+\href{https://cs231n.github.io/linear-classify/#softmax-classifier}{these notes from CS231N}. 
+
+In my implementation, I first found the softmax probabilities ($ \hat{ \bm y}$) 
+for every vector in $\bm U$ since we'll need it later for the gradient. Speaking of which, 
+here are our gradients computed in problems B, C, and D. 
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm v_c} = 
+    \bm U^\top (\bm {\hat y} - \bm y)
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)}{\partial \bm U} = 
+    \bm v_c ( \bm {\hat y} - \bm y )^\top
+\end{equation*}
+I chose not to use a one-hot vector $\bm y$ in my code because it's quite simple 
+to just subtract 1 from the value $ \hat{ \bm y_o}$ in our $\hat {\bm y}$ vector. 
+A one-hot vector would just be a waste of space and excess computation. Hopefully my code 
+is easy to follow. It's labeled exactly the same as the math so if you know how to use 
+NumPy it should be easy to follow along. 
+
+\subsection{Negative Sampling Loss and Gradient}
+Onto the more complicated negative sampling loss and gradient. Our loss from Problem G is
+\begin{equation*}
+    \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U) = -\log(\sigma(\bm u_o^\top \bm v_c)) - \sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c))
+\end{equation*}
+Our first step is to get our negative samples. This is implemented for us already (yay! ...? 
+I'm always curious as to how things work but I'll leave my curiosity for more important things). 
+Then, we get our matrix 
+$\bm{U}_{o, \{w_1, \dots, w_K\}} = \begin{bmatrix} \bm{u}_o, -\bm{u}_{w_1}, \dots, -\bm{u}_{w_K} \end{bmatrix}$. 
+We matrix multiply $\bm U_o \bm v_c$, pass the result through our sigmoid, take the negative log 
+of every term, and sum everything to find our loss. And boom, loss calculated. 
+~\\
+~\\
+For the gradient with respect to $\bm v_c$ we have 
+\begin{equation*}
+    \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm v_c} = 
+    [\sigma(\bm u_o^\top \bm v_c) - 1] \bm u_o +
+    \sum_{s=1}^K [1 - \sigma(-\bm u_{w_s}^\top \bm v_c)]
+    \bm u_{w_s}
+\end{equation*}
+Note that this isn't the final form I placed the gradient in but this is actually the 
+easiest one to work with. We can rearrange this a bit to find 
+\begin{equation*}
+    \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm v_c} = 
+    [\sigma(\bm u_o^\top \bm v_c) - 1] \bm u_o +
+    \sum_{s=1}^K [\sigma(-\bm u_{w_s}^\top \bm v_c - 1)]
+    (- \bm u_{w_s})
+\end{equation*}
+We can easily reuse $\bm U_o$ and the sigmoid we calculated before using this simple line of code 
+\begin{verbatim}
+    gradCenterVec = U_o.T @ (scores_sig - 1) 
+\end{verbatim}
+I'll leave it to you to figure out why this works. 
+Onto our final gradient, the gradient with respect to $\bm u_o$ and $\bm u_{w_s}$. 
+From problem G part (ii) we know 
+\begin{equation*}
+    \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_o} = 
+    [\sigma(\bm u_o^\top \bm v_c) - 1] \bm v_c
+\end{equation*}
+\begin{equation*}
+    \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm u_{w_s}} = 
+    [1 - \sigma(-\bm u_{w_s}^\top \bm v_c)]
+    \bm v_c
+\end{equation*}
+We use the following lines of code to find 
+$\frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial \bm U_o}$
+
+\begin{verbatim}
+    scores_sig[0] -= 1
+    scores_sig[1:] = 1 - scores_sig[1:]
+    U_o_grad = np.outer(scores_sig, v_c)
+\end{verbatim}
+Finally, we iterate through $\bm U_o$ and add the vector to its proper place in our 
+gradient matrix. I racked my brain for a long time to try and do this without using 
+a for loop but I could not find one. Please let me know if you did, I would thoroughly 
+enjoy knowing. 
+
+\subsection{Skipgram}
+This function is pretty simple. All you need to do is iterate over all the words, add 
+all the losses, add all the gradients, and spit back the output. Nothing much going on 
+here to be honest. Although I will note that in the gradient checker, if you switch 
+the order in which you check the two different functions (negative sampling vs. softmax), 
+you actually get a different loss. I'm not totally sure what that's about but it was something 
+worth mentioning. 
+
+\subsection{Stochastic Gradient Descent}
+The update rule is pretty simple here. We just use the following code 
+per usual
+\begin{verbatim}
+    loss, gradient = f(x)
+    x -= step * gradient
+\end{verbatim}
+Anyways, that's all for this assignment!
 
 
-
-
+\section{References}
+\begin{enumerate}
+    \item \href{https://cs231n.github.io/python-numpy-tutorial/}{Python Tutorial}
+    \item \href{https://cs231n.github.io/linear-classify/#softmax-classifier}{Softmax}
+\end{enumerate}
 
 
 
