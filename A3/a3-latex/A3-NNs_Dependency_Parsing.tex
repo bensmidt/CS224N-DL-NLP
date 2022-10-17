@@ -1,0 +1,191 @@
+\documentclass[12pt]{article}
+\usepackage{lingmacros}
+\usepackage{tree-dvips}
+% hyper links
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bbm}
+\usepackage{bm}
+% Formatting quotes properly
+\usepackage[english]{babel}
+\usepackage[autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+
+
+% \newif\ifanswers
+% \answerstrue % comment out to hide answers
+
+% \usepackage[compact]{titlesec}
+% \usepackage{fancyhdr} % Required for custom headers
+% \usepackage{lastpage} % Required to determine the last page for the footer
+% \usepackage{extramarks} % Required for headers and footers
+% \usepackage[usenames,dvipsnames]{color} % Required for custom colors
+% \usepackage{graphicx} % Required to insert images
+% \usepackage{listings} % Required for insertion of code
+% \usepackage{courier} % Required for the courier font
+% \usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+% \usepackage{enumerate}
+% \usepackage{enumitem}
+% \usepackage{subfigure}
+% \usepackage{booktabs}
+% \usepackage{amsmath, amsthm, amssymb}
+% \usepackage{caption}
+% \usepackage{hyperref}
+% \captionsetup[table]{skip=4pt}
+% \usepackage{framed}
+% \usepackage{bm}
+% \usepackage{minted}
+% \usepackage{tikz}
+% \usetikzlibrary{positioning,patterns,fit}
+
+\begin{document}
+
+\noindent Author: Benjamin Smidt
+
+\noindent Created: October 17th, 2022
+
+\noindent Last Updated: October 17th, 2022
+\begin{center}
+\section*{CS 224N A3: Dependency Parsing}
+\end{center}
+
+\paragraph{} Note to the reader. This is my work for assignment two of Stanford's course
+\href{https://web.stanford.edu/class/cs224n/}{CS 224N: Natural Language Processing with Deep Learning}. 
+You can find the lecture Winter 2021 lectures series on YouTube 
+\href{https://www.youtube.com/playlist?list=PLoROMvodv4rOSH4v6133s9LFPRHjEmbmJ}{here}.
+This document is meant to be used as a reference, explanation, and resource for the assignment, 
+not necessarily a comprehensive overview of Word Vectors. If there's a typo or a correction 
+needs to be made, feel free to email me at benjamin.smidt@utexas.edu so I can fix it. 
+Thank you! I hope you find this document helpful :). 
+
+\tableofcontents{}
+
+\newpage
+
+\section{Machine Learning and Neural Networks}
+
+\subsection{Adam Optimizer}
+In our traditional Stochastic Gradient Descent, the update rule is 
+\begin{equation*}
+    \theta \leftarrow \theta - \alpha \nabla_{\theta} J_{\text{minibatch}}(\theta)
+\end{equation*}
+The Adam optimizer modifies SGD such in an effort to improve convergence. The first 
+addition is the use of \emph{momentum}. Adam keeps a rolling average of the gradients 
+instead of using only the current gradient. 
+\begin{equation}
+    m \leftarrow \beta_1 m + (1 - \beta_1) \nabla_\theta J_{\text{minibatch}} (\theta)
+\end{equation}
+\begin{equation*}
+    \theta \leftarrow \theta - \alpha m
+\end{equation*}
+(i) \emph{Briefly explain in 2-4 sentences how using $m$ stops the updates from 
+varying as much and why this low variance may be helpful to learning, overall.}
+~\\
+~\\
+$m$ is a weighted average between all the previous updates, embedded in $m$, and the current 
+update $\nabla_\theta J_{\text{minibatch}}(\theta)$ (our $\beta_1$ parameter specifies the 
+weight to give each term, $\beta_1 = 0.9$ is common). By keeping this weighted average, 
+the update naturally gives higher weight to updating in directions that have been 
+consistent while updates along dimensions that keep switching between positive and negative 
+are given close to no weight. This improves optimization since our updates will minimize steps 
+in dimensions that aren't getting us anywhere meaningful (flipping between positive and negative, 
+can't decide which direction to go in) and maximize steps in dimensions that are getting us 
+somewhere meaningful (nearly all updates have had this direction). 
+~\\
+~\\
+A second addition to Adam is \emph{adaptive learning rates}, which keeps track of $v$, a rolling average
+of the magnitude of the gradients. 
+\begin{equation*}
+    m \leftarrow \beta_1 m + (1 - \beta_1) \nabla_\theta J_{\text{minibatch}}(\theta)
+\end{equation*}
+\begin{equation*}
+    v \leftarrow \beta_2 v + (1 - \beta_2) (\nabla_\theta J_{\text{minibatch}}(\theta) 
+    \; \odot \; \nabla_\theta J_{\text{minibatch}}(\theta) )
+\end{equation*}
+\begin{equation*}
+    \theta \leftarrow \theta - \alpha m / \sqrt{v}
+\end{equation*}
+$odot$ is elementwise multiplication and $/$ is elementwise division. $\beta_2$ is our second 
+hyperparameter (often set to 0.99). 
+~\\
+~\\
+(ii) \emph{Since Adam divides the update by $\sqrt{v}$, which of the model parameter will get larger updates? 
+Why might this help with learning?}
+~\\
+~\\
+If $v$ is quite small, then dividing by $\sqrt{v}$ will make the term $\alpha m / \sqrt{v}$ large.
+This improve learning because often times we need a large learning rate if our gradient update is naturally
+small. 
+~\\
+~\\
+The vice versa is also true. When the gradient is very large ($v$ is very large), then we don't
+need a very large learning rate and often a small learning rate will be better. In this 
+case, by dividing by $\sqrt{v}$, we actually reduce the magnitude of the update to counterbalance
+the already large gradient. 
+
+\subsection{Dropout}
+
+Dropout is a form of regularization wherein we "drop" random connections within the 
+hidden layers of our network during each update (different connections are 
+dropped for each update). We do this mathematically with the following
+\begin{equation*}
+    h_{\text{drop}} = \gamma d \odot h 
+\end{equation*}
+where $h$ is a hidden layer, $d \in \{0, 1\}^{D_h}$ ($D_h$ is the size of $h$) is a mask vector
+with each entry being 0 (with probability $p_{\text{drop}}$) or 1 (with probability 
+$1 - p_{\text{drop}}$), and $\gamma$ is a constant chosen such that the expected 
+value of $h_{\text{drop}}$ is $h$
+\begin{equation*}
+    \mathbb{E}_{p_{\text{drop}}} [h_{\text{drop}}]_i = h_i \; \; \; \forall \; i \in \{1, \dotso, D_h\}
+\end{equation*}
+(i) \emph{What must $\gamma$ equal in terms of $p_{\text{drop}}$? Briefly justify your answer or 
+show your math derivation using the equations given above}
+
+\begin{equation*}
+    \mathbb{E}_{p_{\text{drop}}} [h_{\text{drop}}] = h
+\end{equation*}
+\begin{equation*}
+    \mathbb{E}_{p_{\text{drop}}} [\gamma d \odot h ] = h
+\end{equation*}
+\begin{equation*}
+    \gamma \; \mathbb{E}_{p_{\text{drop}}} [d \odot h] = h
+\end{equation*}
+\begin{equation*}
+    \gamma [h p_{\text{drop}} + (1 - p_{\text{drop}})0] = h
+\end{equation*}
+\begin{equation*}
+    \gamma \; h p_{\text{drop}} = h
+\end{equation*}
+\begin{equation*}
+    \gamma = \frac{1}{p_{\text{drop}}}
+\end{equation*}
+
+(ii) \emph{Why should dropout be applied during training? Why should dropout 
+NOT be applied during evaluation?}
+~\\
+~\\
+Dropout should be applied during training so the network learns different
+pathways that lead to the same prediction. By closing different connections 
+randomly, the network is forced to produce multiple paths in which data can flow 
+to achieve the correct prediction, theoretically making it more robust. 
+~\\
+~\\
+We wouldn't want to apply dropout during evaluation however because our 
+results would be non-deterministic. Due to the randomness of the 
+dopout connections, it's possible (and may even be likely depending on the 
+network) that evaluating the same input twice yields different predictions. 
+Obviously this is an undesirable trait to have in a machine learning model 
+so we don't apply dropout during evaluation. 
+
+
+\section{Neural Transition-Based Dependency Parsing}
+
+
+
+
+
+\end{document}
