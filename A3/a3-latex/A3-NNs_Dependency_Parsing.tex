@@ -13,6 +13,9 @@
 \MakeOuterQuote{"}
 \usepackage{hyperref}
 \usepackage{enumitem}
+\usepackage{array}
+    %\setlength{\extrarowheight}{1pt}
+\usepackage{lipsum}
 
 
 
@@ -184,7 +187,35 @@ so we don't apply dropout during evaluation.
 
 \section{Neural Transition-Based Dependency Parsing}
 
+\subsection{Problem A}
 
+\bigskip
+\scriptsize
+\addtolength{\tabcolsep}{-1pt}
+\begin{tabular}{l|l|c|c}
+    Stack & Buffer & New Dependency & Transition \\
+    \hline
+    ROOT & I, parsed, this sentence, correctly && Initial Configuration \\
+    ROOT, I & parsed, this sentence, correctly && SHIFT \\
+    ROOT, I, parsed & this sentence, correctly && SHIFT \\
+    ROOT, parsed & this sentence, correctly & parsed $\rightarrow$ I & LEFT-ARC \\
+    ROOT, parsed, this & sentence, correctly  && SHIFT \\
+    ROOT, parsed, this, sentence & correctly && SHIFT \\
+    ROOT, parsed, sentence & correctly & sentence $\rightarrow$ this & LEFT-ARC \\
+    ROOT, parsed & correctly & parsed $\rightarrow$ sentence & RIGHT-ARC \\
+    ROOT, parsed, correctly &&& SHIFT \\
+    ROOT, parsed && parsed $\rightarrow$ correctly & RIGHT-ARC \\
+    ROOT && ROOT $\rightarrow$ parsed & RIGHT-ARC \\
+\end{tabular}
+
+\normalsize
+\subsection{Problem B}
+There are only two options at a given step: push a word onto the stack or pop 
+a word (and create a dependency) off of the stack. Since every word must be 
+pushed onto the stack a single time and popped off the stack a single time, 
+this leaves us with $2n$ steps. This is concurrent with our table which has 
+11 rows: $2(5) + 1$ where $n = 5$ and we have an additional row for our 
+initial state of the stack with only ROOT. 
 
 
 
