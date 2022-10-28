@@ -124,17 +124,27 @@ def minibatch_parse(sentences, model, batch_size):
     partial_parses = []
     for i in range(len(sentences)): 
         partial_parses.append(PartialParse(sentences[i]))
+    
     # create shallow list of partial_parses list 
     unfinished_parses = partial_parses
 
-    
+    while len(unfinished_parses) > 0: 
+        try: 
+            cur_parses = unfinished_parses[:batch_size]
+        except IndexError:
+            cur_parses = unfinished_parses[:len(unfinished_parses)]
+        transitions = model.predict(cur_parses)
 
+        for i in range(len(cur_parses)): 
+            cur_parses[i].parse_step(transitions[i])
 
-
-
-    
-
-
+        for i in range(len(cur_parses), -1, -1):
+            if len(cur_parses[i].buffer) == 0 and len(cur_parses[i].stack) == 1: 
+                try: 
+                    cur_parses = cur_parses[:i] + cur_parses[i+1:]
+                except IndexError: 
+                    cur_pases = cur_parses[:i]
+                    
     ### END YOUR CODE
 
     return dependencies
