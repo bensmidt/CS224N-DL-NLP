@@ -72,9 +72,21 @@ class ParserModel(nn.Module):
         ###     Dropout: https://pytorch.org/docs/stable/nn.html#dropout-layers
         ### 
         ### See the PDF for hints.
+        
+        # hidden layer, xavier and uniform initialization
+        embed_to_hidden_weight = nn.Parameter(torch.zeros(n_features*self.embed_size, hidden_size))
+        self.embed_to_hidden_weight = nn.init.xavier_uniform_(embed_to_hidden_weight)
+        embed_to_hidden_bias = nn.Parameter(torch.zeros(hidden_size))
+        self.embed_to_hidden_bias = nn.init.uniform_(embed_to_hidden_bias)
 
+        # dropout layer
+        self.dropout = nn.Dropout(dropout_prob)
 
-
+        # scores layer, xavier and uniform initialization
+        hidden_to_logits_weight = nn.Parameter(torch.zeros((hidden_size, n_classes)))
+        self.hidden_to_logits_weight =  nn.init.xavier_uniform_(hidden_to_logits_weight)
+        hidden_to_logits_bias = nn.Parameter((torch.zeros(n_classes)))
+        self.hidden_to_logits_bias = nn.init.uniform_(hidden_to_logits_bias)
 
         ### END YOUR CODE
 
@@ -106,9 +118,15 @@ class ParserModel(nn.Module):
         ###     Gather: https://pytorch.org/docs/stable/torch.html#torch.gather
         ###     View: https://pytorch.org/docs/stable/tensors.html#torch.Tensor.view
         ###     Flatten: https://pytorch.org/docs/stable/generated/torch.flatten.html
+        batch_size, n_features = w.shape
 
+        # flatten w
+        w_flat = torch.flatten(w)
+        # use flattened w to get embeddings easily
+        x = self.embeddings[w_flat]
 
-
+        # reshape x to proper shape
+        x = x.reshape(batch_size, n_features*self.embed_size)
         ### END YOUR CODE
         return x
 
@@ -143,7 +161,10 @@ class ParserModel(nn.Module):
         ### Please see the following docs for support:
         ###     Matrix product: https://pytorch.org/docs/stable/torch.html#torch.matmul
         ###     ReLU: https://pytorch.org/docs/stable/nn.html?highlight=relu#torch.nn.functional.relu
-
+        x = self.embedding_lookup(w)
+        h = x @ self.embed_to_hidden_weight + self.embed_to_hidden_bias
+        h = self.dropout(torch.clamp(h, min=0))
+        logits = h @ self.hidden_to_logits_weight + self.hidden_to_logits_bias
 
         ### END YOUR CODE
         return logits

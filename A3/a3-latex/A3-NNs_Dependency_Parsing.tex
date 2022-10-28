@@ -51,7 +51,7 @@
 
 \noindent Created: October 17th, 2022
 
-\noindent Last Updated: October 17th, 2022
+\noindent Last Updated: October 28th, 2022
 \begin{center}
 \section*{CS 224N A3: Dependency Parsing}
 \end{center}
@@ -225,6 +225,26 @@ that we do NOT want to modify the sentence we're parsing so we must make
 a COPY of the sentence when initializing the buffer. Otherwise, the buffer 
 will point to the same memory location as the sentence and we'll be modifying 
 our original sentence, which we don't want. 
+
+\subsection{Problem D: Minibatch}
+Kind of the same deal as part C, the pseudo code is given so we just have to work out 
+the actual implementation which isn't too difficult, particularly since 
+we're using Python. Just see the code for how this is done, the instructions 
+explain high level what's happening already. 
+
+\subsection{Problem E: Training and Test}
+I know this seems a bit lazy maybe, but I'm not going to explain this seciton either. 
+I spent a tremendous amount of time learning and explaining all of this 
+in the EECS 498: Deep Learning for Computer Vision course. The details aren't the 
+same (obviously), but building neural networks, using PyTorch, optimizing, etc. 
+are all covered in DEPTH in the assignments (for which I have written very detailed 
+explanations to accompany them). 
+
+sThus, I will suffice to say that you need only look 
+at the code for this assignment to understand what I'm doing (provided you understand 
+DL). If you don't, I'd recommend the EECS 498: Deep Learning for Computer Vision as it 
+is the best introduction to Deep Learning I've found so far (even if it is a little 
+"older" (2019)). 
 
 \subsection{}
 

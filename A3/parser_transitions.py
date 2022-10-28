@@ -121,9 +121,7 @@ def minibatch_parse(sentences, model, batch_size):
     ###             is being accessed by `partial_parses` and may cause your code to crash.
     
     # create list of PartialParse objects
-    partial_parses = []
-    for i in range(len(sentences)): 
-        partial_parses.append(PartialParse(sentences[i]))
+    partial_parses = [PartialParse(sentence) for sentence in sentences]
     
     # create shallow list of partial_parses list 
     unfinished_parses = partial_parses
@@ -133,18 +131,24 @@ def minibatch_parse(sentences, model, batch_size):
             cur_parses = unfinished_parses[:batch_size]
         except IndexError:
             cur_parses = unfinished_parses[:len(unfinished_parses)]
+
+        # get transition predictions
         transitions = model.predict(cur_parses)
 
+        # parse 1 time using predicted transitions
         for i in range(len(cur_parses)): 
             cur_parses[i].parse_step(transitions[i])
 
-        for i in range(len(cur_parses), -1, -1):
-            if len(cur_parses[i].buffer) == 0 and len(cur_parses[i].stack) == 1: 
-                try: 
-                    cur_parses = cur_parses[:i] + cur_parses[i+1:]
-                except IndexError: 
-                    cur_pases = cur_parses[:i]
-                    
+        # check for finished parses and remove from unfinished parses if needed
+        for i in range(len(cur_parses)-2, -1, -1):
+            if len(cur_parses[i].buffer) == 0 and len(cur_parses[i].stack) == 1:
+                unfinished_parses = unfinished_parses[:i] + unfinished_parses[i+1:]
+
+        if len(cur_parses[-1].buffer) == 0 and len(cur_parses[-1].stack) == 1: 
+            unfinished_parses = unfinished_parses[:-1]
+    
+    for partial_parse in partial_parses: 
+        dependencies.append(partial_parse.dependencies)
     ### END YOUR CODE
 
     return dependencies
