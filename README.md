@@ -22,10 +22,16 @@ If you want to see the assignments without my code (eg. you want to do it yourse
 ## Assignment 2
 - Word2Vec
   - [Instructions](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/A2-Instructions.pdf)
-  - [word2vec.py](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/word2vec.py), [sgd.py](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/sgd.py)
+  - [word2vec.py](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/word2vec.py)
+  - [sgd.py](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/sgd.py)
   - [PDF Work/Explanations](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/A2-Latex/a2_explained.pdf)
 
 ## Assignment 3
+- Dependency Parsing with Neural Networks
+  - [Instructions](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A3/a3-instructions.pdf)
+  - [parser_transitions.py](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A3/parser_transitions.py)
+  - [parser_model.py](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A3/parser_model.py)
+  - [PDF Work/Explanations](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A3/a3-latex/A3-NNs_Dependency_Parsing.pdf)
 
 ## Assignment 4
 
