@@ -1,9 +1,9 @@
-name: local_nmt
+name: cs224n-a4
 channels:
   - pytorch
   - defaults
 dependencies:
-  - python=3.7
+  - python
   - numpy
   - scipy
   - tqdm

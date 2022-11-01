@@ -34,9 +34,11 @@ def pad_sents(sents, pad_token):
     sents_padded = []
 
     ### YOUR CODE HERE (~6 Lines)
-
-
-
+    max_len = 0
+    for sent in sents: max_len = max(max_len, len(sent))
+    for sent in sents: 
+        sent_padded = sent + [pad_token] * (max_len - len(sent))
+        sents_padded.append(sent_padded)
     ### END YOUR CODE
 
     return sents_padded
@@ -103,4 +105,3 @@ def batch_iter(data, batch_size, shuffle=False):
         tgt_sents = [e[1] for e in examples]
 
         yield src_sents, tgt_sents
-
