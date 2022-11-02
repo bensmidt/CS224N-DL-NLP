@@ -256,20 +256,21 @@ class NMT(nn.Module):
         ###         https://pytorch.org/docs/stable/torch.html#torch.stack
 
         enc_hiddens_proj = self.att_projection(enc_hiddens)
-        Y = self.model_embeddings.tgt(target_padded)
+        Y = self.model_embeddings.target(target_padded)
         Y_split = torch.split(Y)
         for Y_t in Y_split: 
             Y_t = torch.squeeze(Y_t, dim=0)
             Ybar_t = torch.cat(o_prev, Y_t)
             dec_state = self.decoder(Ybar_t, dec_state)
             e = enc_hiddens_proj @ dec_state[0]
-            softmax = nn.Softmax(dim=0)
-            att = softmax(e)
+            att_weights = nn.functional.softmax(e, dim=0)
+            att = att_weights @ dec_state[0]
             u = torch.stack( (att, dec_state[0]) )
             o_t = self.dropout(torch.tanh(self.combined_output_projection(u)))
+            o_prev = o_t
             combined_outputs.append(o_t)
 
-        combined_outputs = torch.stack( tuple(combined_outputs) )
+        # combined_outputs = torch.stack( tuple(combined_outputs) )
         ### END YOUR CODE
 
         return combined_outputs
