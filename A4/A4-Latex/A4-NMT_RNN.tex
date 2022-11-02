@@ -51,7 +51,7 @@
 
 \noindent Created: October 31st, 2022
 
-\noindent Last Updated: October 31st, 2022
+\noindent Last Updated: November 2nd, 2022
 \begin{center}
 \section*{CS 224N A4: Neural Machine Translation with RNNs}
 \end{center}
@@ -69,7 +69,37 @@ Thank you! I hope you find this document helpful :).
 
 \newpage
 
-\section{Machine Learning and Neural Networks}
-hello
+\section{Neural Machine Translation with RNNs}
+
+\subsection{Problem G}
+\underline{Question}:
+~\\
+The \emph{generate-sent-masks()} function in \emph{nmt-model.py} produces a tensor 
+called \emph{enc-masks}. It has shape (batch size, max source sentence length) 
+and contains 1s in positions corresponding to ‘pad’ tokens in the input, 
+and 0s for non-pad tokens. Look at how the masks are used during the 
+attention computation in the step() function.
+First explain (in around three sentences) what effect the masks have 
+on the entire attention computation. Then explain (in one or two 
+sentences) why it is necessary to use the masks in this way.
+~\\
+~\\
+\underline{Answer}: 
+~\\
+You can see in the code that we set the attention weights for the masked 
+values (wherever ‘pad’ token appears) to negative infinity. As a result 
+they are given zero weight in the softmax function, meaning the network 
+never attends to these words. This is what we want because we don't want 
+the model to use the ‘pad’ tokens for prediction since they're just a filler 
+value. 
+~\\
+~\\
+We have to use the masks in this manner because we need to keep our 
+vector shapes but we don't want to attend the ‘pad’ tokens. By setting 
+their weights to negative infinity before the softmax, we effectively 
+cut them out of the attention mechanism while retaining the vector shapes 
+we need for the network to function properly. 
+
+\subsection{Problem I}
 
 \end{document}
