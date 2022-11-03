@@ -14,27 +14,27 @@ There are a total of 5 assignments of varying length. For the first assignment, 
 
 If you want to see the assignments without my code (eg. you want to do it yourself!), they can be found at the [course website](https://web.stanford.edu/class/cs224n/index.html#schedule)
 
-## Assignment 1
-- Exploring Word Vectors
+## Assignment 1: Exploring Word Vectors
   - [exploring_word_vectors.ipynb](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A1/exploring_word_vectors.ipynb)
   - [PDF Work/Explanations](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A1/ExploringWordVectors.pdf)
 
-## Assignment 2
-- Word2Vec
+## Assignment 2: Word2Vec
   - [Instructions](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/A2-Instructions.pdf)
   - [word2vec.py](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/word2vec.py)
   - [sgd.py](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/sgd.py)
   - [PDF Work/Explanations](https://github.com/bensmidt/CS224N-Deep-Learning-NLP/blob/main/A2/A2-Latex/a2_explained.pdf)
 
-## Assignment 3
-- Dependency Parsing with Neural Networks
+## Assignment 3: Dependency Parsing with Neural Networks
   - [Instructions](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A3/a3-instructions.pdf)
   - [parser_transitions.py](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A3/parser_transitions.py)
   - [parser_model.py](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A3/parser_model.py)
   - [PDF Work/Explanations](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A3/a3-latex/A3-NNs_Dependency_Parsing.pdf)
 
-## Assignment 4
+## Assignment 4: Machine Translation with RNNs
+  - [Instructions](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A4/A4-Instructions.pdf)
+  - [model_embeddings.py](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A4/model_embeddings.py)
+  - [nmt_model.py](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A4/nmt_model.py)
+  - [PDF Work/Explanations](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A4/A4-Latex/A4-NMT_RNN.pdf)
 
-## Assignment 5
-
-## Assignment 6
+## Assignment 5: Self-Attention, Transformers, and Pretraining
+- [Instructions](https://github.com/bensmidt/CS224N-DL-Natural-Language-Processing/blob/main/A5/A5-Instructions.pdf)
