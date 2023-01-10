@@ -14,18 +14,20 @@
 
 \noindent Created: September 24, 2022
 
-\noindent Last Updated: September 24, 2022
+\noindent Last Updated: December 16, 2022
 \begin{center}
 \section*{Assignment 1: Exploring Word Vectors}
 \end{center}
 
-\paragraph{} Note to the reader. This is my work for assignment 1 of Stanford's course
+\paragraph{} \emph{Note to the reader}. This is my work for assignment 1 of Stanford's course
 \href{https://web.stanford.edu/class/cs224n/}{CS 224N: Natural Language Processing with Deep Learning}. 
-You can find the lecture Winter 2021 lectures series on YouTube \href{https://www.youtube.com/playlist?list=PLoROMvodv4rOSH4v6133s9LFPRHjEmbmJ}{here}.
+You can find the Winter 2021 lectures on YouTube \href{https://www.youtube.com/playlist?list=PLoROMvodv4rOSH4v6133s9LFPRHjEmbmJ}{here}.
 This document is meant to be used as a reference, explanation, and resource for the assignment, 
 not necessarily a comprehensive overview of Word Vectors. If there's a typo or a correction 
-needs to be made, feel free to email me at benjamin.smidt@utexas.edu so I can fix it. 
+needs to be made, feel free to email me at bensmidt@clipsai.com so I can fix it. 
 Thank you! I hope you find this document helpful :). 
+
+\emph{See Code} - there's no much to explain so just see the code for how it's done.
 
 \tableofcontents
 
@@ -34,11 +36,7 @@ Thank you! I hope you find this document helpful :).
 \section{Count-Based Word Vectors}
 
 \subsection{Distinct Words}
-Our first function is pretty simple. Our goal is to flatten the list of lists of words into one long list. 
-From there we remove all the duplicate words and return both the sorted list and its length. See the
-notebook for links on using list comprehension (to flatten the list of list of words). Python's \emph{set}
-data structure comes in very handy for removing duplicate words. Finally, we finish by having python 
-convert that set back to a list for us and using the \emph{sorted} function to sort that list. 
+See Code.
 
 \subsection{Compute Co-Occurence Matrix}
 This function is slightly more complicated but honestly if you've done some python programming it's fairly 

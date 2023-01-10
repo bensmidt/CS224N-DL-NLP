@@ -12,7 +12,7 @@ After you have installed conda, close any open terminals you might have. Then op
     
     conda activate cs224n
     
-# 3. Inside the new environment, instatll IPython kernel so we can use this environment in jupyter notebook: 
+# 3. Inside the new environment, install IPython kernel so we can use this environment in jupyter notebook: 
     
     python -m ipykernel install --user --name cs224n
 
